@@ -18,6 +18,10 @@
   },
   "homepage": "https://github.com/StanislavMikheyev/news-sharing#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-handlebars": "^3.0.0",
+    "hash-generator": "^0.1.0",
+    "mongodb": "^3.0.1"
   }
 }
