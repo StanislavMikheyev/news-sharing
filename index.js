@@ -32,16 +32,47 @@ app.listen(3000, () => {
     console.log('news-sharing app listening on port 3000!');
 });
 
+//Data helpers
+class Article {
+    constructor(title, text) {
+        this._id = undefined;
+        this.url = createHash(16);
+        this.author = null;
+        this.title = title;
+        this.text = text;
+        this.comments = [];
+        this.date = Date.now()
+    }
+}
+
+class Comment {
+    constructor(text) {
+        this.author = "Anonymous";
+        this.text = text;
+        this.date = Date.now();
+    }
+}
+
 //Routers
 
+//Index
 app.get('/', (req, res) => {
-    database.collection('articles').find().toArray().then((articles) => {
+    database.collection('articles').find().sort({date: -1}).toArray().then((articles) => {
         let renderData = {
             articles: articles.map((article) => {
-                if (article.text.length > 140) {
-                    article.text = article.text.substring(0, 139) + '...';
+                let articleRenderData = {};
+                if (article.title.length > 140) {
+                    articleRenderData.title = article.title.substring(0, 139) + ' ...';
+                } else {
+                    articleRenderData.title = article.title;
                 }
-                return article;
+                if (article.text.length > 500) {
+                    articleRenderData.text = article.text.substring(0, 499) + ' ...';
+                } else {
+                    articleRenderData.text = article.text;
+                }
+                articleRenderData.url = article.url;
+                return articleRenderData;
             })
         };
         res.render('index', renderData);
@@ -54,24 +85,39 @@ app.get('/new', (req, res) => {
 });
 
 app.post('/article-api/create', (req, res) => {
-    let article = req.body;
-    article.name = createHash(16);
+    let article = new Article(req.body.title, req.body.text);
     database.collection('articles').insertOne(article).then(() => {
         res.redirect(302, '/article/' + article.name);
     });
 });
 
 app.post('/article-api/update', (req, res) => {
-    //
+    //todo
 });
 
-app.get('/article/:articleName', (req, res) => {
-    database.collection('articles').findOne({name: req.params.articleName}).then((result) => {
+app.get('/article/:articleUrl', (req, res) => {
+    database.collection('articles').findOne({url: req.params.articleUrl}).then((result) => {
         if (result == null) {
-            res.render('articleNotFound');
-            return;
+            return res.render('articleNotFound');
         }
-        res.render('viewArticle', result);
+        let renderData = {
+            title: result.title,
+            text: result.text,
+            comments: result.comments,
+            url: req.params.articleUrl,
+        };
+        res.render('viewArticle', renderData);
+    });
+});
+
+app.post('/article-api/add-comment', (req, res) => {
+    console.log(req.session);
+    let newComment = new Comment(req.body.text);
+    if (req.body.anonymous === "false") {
+        newComment.author = req.session.user.username;
+    }
+    database.collection('articles').findOneAndUpdate({url: req.body.url}, {$push: {comments: newComment}}).then(() => {
+        res.redirect(302, '/article/' + req.body.url);
     });
 });
 

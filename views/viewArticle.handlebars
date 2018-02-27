@@ -1,2 +1,27 @@
-<h1>{{title}}</h1>
-<p>{{text}}</p>
+<div style="overflow: auto">
+    <h1>{{title}}</h1>
+</div>
+<div style="overflow: auto">
+    <p>{{text}}</p>
+</div>
+<h3>Leave a Comment</h3>
+<form action="/article-api/add-comment" method="post">
+    <div class="form-group">
+        <textarea class="form-control" name="text"></textarea>
+    </div>
+    <input type="hidden" name="url" value="{{url}}">
+    <button type="submit" class="btn btn-primary" name="anonymous" value="false">Submit</button>
+    <button type="submit" class="btn btn-secondary" name="anonymous" value="true">Submit Anonymously</button>
+</form>
+<div class="mt-5">
+    <h3>Comments</h3>
+    {{#each comments}}
+        <p>From <b>Anonymous</b></p>
+        <p>
+            {{this.text}}
+        </p>
+        {{#unless @last}}
+            <hr>
+        {{/unless}}
+    {{/each}}
+</div>

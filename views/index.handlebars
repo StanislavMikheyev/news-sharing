@@ -1,9 +1,11 @@
 <h1>Recent Articles</h1>
 
 {{#each articles}}
-    <a href="/article/{{this.name}}"><h3>{{this.title}}</h3></a>
-    <p>{{this.text}}</p>
-    {{#unless @last}}
-        <hr>
-    {{/unless}}
+    <div style="overflow: hidden">
+        <a href="/article/{{this.url}}"><h5>{{this.title}}</h5></a>
+        <p>{{this.text}}</p>
+        {{#unless @last}}
+            <hr>
+        {{/unless}}
+    </div>
 {{/each}}
