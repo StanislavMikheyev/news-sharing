@@ -10,6 +10,7 @@ require('mongodb').MongoClient.connect('mongodb://localhost:27017', (err, client
     database = client.db('news-sharing');
 });
 
+
 const exphbs = require('express-handlebars');
 app.engine('handlebars', exphbs({
     defaultLayout: 'main'
