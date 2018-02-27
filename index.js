@@ -11,6 +11,7 @@ require('mongodb').MongoClient.connect('mongodb://localhost:27017', (err, client
 });
 
 
+
 const exphbs = require('express-handlebars');
 app.engine('handlebars', exphbs({
     defaultLayout: 'main'
